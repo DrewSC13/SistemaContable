@@ -2,19 +2,19 @@ from PySide6.QtWidgets import (QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
                              QLabel, QPushButton, QStackedWidget,
                              QFrame, QToolBar, QStatusBar, QMessageBox, QSizePolicy)
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtGui import QFontDatabase, QAction
+from PySide6.QtGui import QFontDatabase
 import os
 
 class SidebarHeader(QFrame):
     def __init__(self):
         super().__init__()
         self.setObjectName("sidebar-header")
-        self.setFixedHeight(120)  # Reducido para responsividad
+        self.setFixedHeight(120)
         self.setup_ui()
     
     def setup_ui(self):
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(10, 15, 10, 10)  # Márgenes reducidos
+        layout.setContentsMargins(10, 15, 10, 10)
         layout.setSpacing(5)
         
         title = QLabel("NECROLEDGER")
@@ -36,17 +36,17 @@ class MenuButton(QPushButton):
         self.setObjectName("menu-button")
         self.setCursor(Qt.PointingHandCursor)
         self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.setFixedHeight(60)  # Reducido para responsividad
+        self.setFixedHeight(60)
         
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(8, 0, 8, 0)  # Márgenes reducidos
+        layout.setContentsMargins(8, 0, 8, 0)
         layout.setSpacing(0)
         
         text_label = QLabel(text)
         text_label.setStyleSheet("""
             background: transparent; 
             color: inherit; 
-            font-size: 14px;  # Reducido
+            font-size: 14px;
             font-weight: 500;
             font-family: 'Segoe UI', sans-serif;
         """)
@@ -59,17 +59,17 @@ class UserSection(QFrame):
         super().__init__()
         self.usuario = usuario
         self.setObjectName("user-section")
-        self.setFixedHeight(80)  # Reducido
+        self.setFixedHeight(80)
         self.setup_ui()
     
     def setup_ui(self):
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(10, 10, 10, 10)  # Márgenes reducidos
+        layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         
         avatar_frame = QFrame()
         avatar_frame.setObjectName("user-avatar")
-        avatar_frame.setFixedSize(40, 40)  # Reducido
+        avatar_frame.setFixedSize(40, 40)
         
         avatar_layout = QVBoxLayout(avatar_frame)
         avatar_layout.setContentsMargins(0, 0, 0, 0)
@@ -79,7 +79,7 @@ class UserSection(QFrame):
         avatar_text.setStyleSheet("""
             color: #0B0D0F; 
             font-weight: bold; 
-            font-size: 14px;  # Reducido
+            font-size: 14px;
             background: transparent;
         """)
         avatar_layout.addWidget(avatar_text)
@@ -114,12 +114,14 @@ class MainWindow(QMainWindow):
         self.setWindowTitle(f"NecroLedger | {usuario.username}")
         
         # Hacer la ventana responsive
-        self.setMinimumSize(1200, 700)  # Tamaño mínimo
-        self.resize(1400, 800)  # Tamaño inicial
+        self.setMinimumSize(1200, 700)
+        self.resize(1400, 800)
         
         self.load_fonts()
         self.apply_style()
         self.setup_ui()
+        
+        print(f"✅ MainWindow creada para usuario: {usuario.username}")
         
     def load_fonts(self):
         font_dir = "src/assets/fonts/"
@@ -133,6 +135,8 @@ class MainWindow(QMainWindow):
         if os.path.exists(style_file):
             with open(style_file, "r") as f:
                 self.setStyleSheet(f.read())
+        else:
+            print("⚠️  No se encontró el archivo de estilos")
     
     def setup_ui(self):
         central_widget = QWidget()
@@ -150,8 +154,8 @@ class MainWindow(QMainWindow):
     def setup_sidebar(self, main_layout):
         sidebar = QFrame()
         sidebar.setObjectName("sidebar")
-        sidebar.setMinimumWidth(280)  # Ancho mínimo
-        sidebar.setMaximumWidth(350)  # Ancho máximo
+        sidebar.setMinimumWidth(280)
+        sidebar.setMaximumWidth(350)
         sidebar.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Expanding)
         
         sidebar_layout = QVBoxLayout(sidebar)
@@ -264,24 +268,34 @@ class MainWindow(QMainWindow):
         self.stacked_widget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         content_layout.addWidget(self.stacked_widget)
         
-        # Añadir vistas
-        from .dashboard_view import DashboardView
-        from .journal_view import JournalView
+        # Añadir vistas - IMPORTANTE: Usar importaciones condicionales
+        try:
+            from src.views.dashboard_view import DashboardView
+            self.stacked_widget.addWidget(DashboardView(self.usuario))
+            print("✅ DashboardView cargada correctamente")
+        except Exception as e:
+            print(f"❌ Error cargando DashboardView: {e}")
+            placeholder = QLabel("Dashboard\n(Módulo no disponible)")
+            placeholder.setAlignment(Qt.AlignCenter)
+            placeholder.setStyleSheet("font-size: 18px; color: #98A0A6; padding: 40px;")
+            self.stacked_widget.addWidget(placeholder)
         
-        self.stacked_widget.addWidget(DashboardView(self.usuario))
-        self.stacked_widget.addWidget(JournalView(self.usuario))
+        try:
+            from src.views.journal_view import JournalView
+            self.stacked_widget.addWidget(JournalView(self.usuario))
+            print("✅ JournalView cargada correctamente")
+        except Exception as e:
+            print(f"❌ Error cargando JournalView: {e}")
+            placeholder = QLabel("Libro Diario\n(Módulo no disponible)")
+            placeholder.setAlignment(Qt.AlignCenter)
+            placeholder.setStyleSheet("font-size: 18px; color: #98A0A6; padding: 40px;")
+            self.stacked_widget.addWidget(placeholder)
         
         # Placeholders para otros módulos
         for i in range(10):
-            placeholder = QLabel(f"Módulo {i+2}\nEn desarrollo")
+            placeholder = QLabel(f"Módulo {i+2}\n(En desarrollo)")
             placeholder.setAlignment(Qt.AlignCenter)
-            placeholder.setStyleSheet("""
-                font-size: 18px; 
-                color: #98A0A6; 
-                padding: 40px;
-                font-family: 'Segoe UI', sans-serif;
-            """)
-            placeholder.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            placeholder.setStyleSheet("font-size: 18px; color: #98A0A6; padding: 40px;")
             self.stacked_widget.addWidget(placeholder)
         
         main_layout.addWidget(content_frame)
@@ -333,10 +347,4 @@ class MainWindow(QMainWindow):
                                    QMessageBox.Yes | QMessageBox.No)
         
         if reply == QMessageBox.Yes:
-            self.logout_requested.emit()
-
-    # Manejar redimensionamiento para responsividad
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        # Aquí puedes agregar lógica adicional para redimensionamiento
-        pass
+            self.logout_requested.emit()    

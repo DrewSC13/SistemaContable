@@ -1,31 +1,60 @@
-/* Paleta Gótica Futurista - Profesional */
+/* Paleta Gótica Futurista - Profesional Mejorada */
 * {
-    --bg-primary: #0B0D0F;
-    --bg-secondary: #101315;
-    --bg-tertiary: #1A1D21;
+    --bg-primary: #0A0E17;
+    --bg-secondary: #13182B;
+    --bg-tertiary: #0F1425;
     --accent-primary: #00E5FF;
     --accent-secondary: #B3009E;
-    --accent-tertiary: #7B00FF;
+    --accent-tertiary: #FF0080;
     --text-primary: #E6EEF3;
-    --text-secondary: #98A0A6;
-    --text-tertiary: #6B7280;
+    --text-secondary: #8A94A6;
+    --text-tertiary: #5A6378;
     --border-color: #2B2F36;
     --border-glow: rgba(0, 229, 255, 0.3);
+    --success-color: #00FF88;
+    --warning-color: #FFAA00;
+    --error-color: #FF4757;
 }
 
-QMainWindow {
+QMainWindow, QWidget {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
-        stop:0 #0B0D0F, stop:0.5 #101315, stop:1 #0B0D0F);
+        stop:0 var(--bg-primary), stop:0.5 var(--bg-secondary), stop:1 var(--bg-primary));
     color: var(--text-primary);
     font-family: 'Segoe UI', 'Inter', sans-serif;
+    font-size: 14px;
 }
 
-/* ========== MENÚ LATERAL PROFESIONAL ========== */
+/* ========== SCROLLBARS MODERNOS ========== */
+QScrollBar:vertical {
+    background: rgba(43, 47, 54, 0.5);
+    width: 12px;
+    border-radius: 6px;
+    margin: 0px;
+}
+
+QScrollBar::handle:vertical {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 var(--accent-primary), stop:1 var(--accent-secondary));
+    border-radius: 6px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #00F7FF, stop:1 #CC00B3);
+}
+
+QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+    border: none;
+    background: none;
+}
+
+/* ========== MENÚ LATERAL PROFESIONAL RESPONSIVE ========== */
 .sidebar {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 var(--bg-secondary), stop:1 var(--bg-tertiary));
     border: none;
-    border-right: 2px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
 }
 
 .sidebar-header {
@@ -33,24 +62,24 @@ QMainWindow {
         stop:0 var(--accent-primary), stop:1 var(--accent-tertiary));
     border: none;
     border-bottom: 2px solid var(--accent-primary);
-    padding: 40px 20px; /* Aumentado */
+    padding: 30px 20px;
 }
 
 .sidebar-title {
     font-family: 'Segoe UI', sans-serif;
-    font-size: 32px; /* Doble: 16px -> 32px */
-    font-weight: bold;
-    color: #00E5FF; /* Color cian */
+    font-size: 24px;
+    font-weight: 800;
+    color: #FFFFFF;
     background: transparent;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
     text-align: center;
 }
 
 .sidebar-subtitle {
-    font-size: 16px; /* Doble: 8px -> 16px */
-    color: #00E5FF; /* Color cian */
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
     background: transparent;
-    letter-spacing: 3px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     font-weight: 300;
     text-align: center;
@@ -60,7 +89,7 @@ QMainWindow {
 .menu-container {
     background: transparent;
     border: none;
-    padding: 20px 10px;
+    padding: 15px 10px;
 }
 
 /* Grupos de menú */
@@ -68,88 +97,89 @@ QMainWindow {
     background: transparent;
     border: none;
     padding: 0px;
-    margin-bottom: 40px; /* Aumentado */
+    margin-bottom: 25px;
 }
 
 .menu-group-title {
-    font-size: 16px; /* Doble: 8px -> 16px */
-    color: #00E5FF; /* Color cian */
+    font-size: 12px;
+    color: var(--accent-primary);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    padding: 16px 20px 12px 20px; /* Aumentado */
+    letter-spacing: 1.5px;
+    padding: 12px 15px 8px 15px;
     background: transparent;
     border-bottom: 1px solid var(--border-glow);
-    margin-bottom: 15px; /* Aumentado */
+    margin-bottom: 10px;
     text-align: center;
 }
 
-/* Botones del menú - Diseño profesional futurista */
+/* Botones del menú - Diseño profesional futurista responsive */
 .menu-button {
     background: transparent;
     border: none;
-    border-radius: 8px; /* Aumentado */
-    padding: 25px 20px; /* Aumentado significativamente */
-    margin: 8px 8px; /* Aumentado */
-    color: #00E5FF; /* Color cian */
-    text-align: center; /* Texto centrado */
-    font-size: 18px; /* Doble: 9px -> 18px */
+    border-radius: 8px;
+    padding: 18px 15px;
+    margin: 5px;
+    color: var(--text-secondary);
+    text-align: center;
+    font-size: 14px;
     font-weight: 500;
     font-family: 'Segoe UI', sans-serif;
-    min-height: 80px; /* Doble: 40px -> 80px */
+    min-height: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.3s ease;
 }
 
 .menu-button:hover {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 rgba(0, 229, 255, 0.15), stop:1 rgba(179, 0, 158, 0.15));
-    color: #00E5FF; /* Color cian */
-    border-left: 6px solid #00E5FF; /* Aumentado */
-    border-right: 6px solid #00E5FF; /* Añadido borde derecho */
-    padding-left: 14px; /* Ajustado */
-    padding-right: 14px; /* Añadido */
-    font-weight: bold;
+    color: var(--accent-primary);
+    border-left: 4px solid var(--accent-primary);
+    border-right: 4px solid var(--accent-primary);
+    padding-left: 11px;
+    padding-right: 11px;
+    font-weight: 600;
+    transform: translateY(-1px);
 }
 
 .menu-button:checked {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 rgba(0, 229, 255, 0.25), stop:1 rgba(179, 0, 158, 0.25));
-    color: #00E5FF; /* Color cian */
-    border-left: 6px solid #00E5FF; /* Aumentado */
-    border-right: 6px solid #00E5FF; /* Añadido borde derecho */
-    font-weight: bold;
-    font-size: 20px; /* Un poco más grande cuando está seleccionado */
+    color: var(--accent-primary);
+    border-left: 4px solid var(--accent-primary);
+    border-right: 4px solid var(--accent-primary);
+    font-weight: 600;
+    font-size: 15px;
 }
 
 .menu-button:checked:hover {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 rgba(0, 229, 255, 0.3), stop:1 rgba(179, 0, 158, 0.3));
-    color: #00E5FF; /* Color cian */
+        stop:0 rgba(0, 229, 255, 0.35), stop:1 rgba(179, 0, 158, 0.35));
 }
 
-/* Sección de usuario */
+/* Sección de usuario responsive */
 .user-section {
-    background: rgba(26, 29, 33, 0.9);
+    background: rgba(26, 29, 33, 0.8);
     border: none;
     border-top: 1px solid var(--border-color);
     border-radius: 8px;
-    margin: 30px 15px; /* Aumentado */
-    padding: 25px; /* Aumentado */
+    margin: 20px 10px;
+    padding: 15px;
 }
 
 .user-avatar {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #00E5FF, stop:1 #00E5FF); /* Color cian sólido */
-    border-radius: 8px; /* Aumentado */
-    color: #0B0D0F; /* Texto oscuro para contraste */
-    font-size: 20px; /* Doble: 10px -> 20px */
+        stop:0 var(--accent-primary), stop:1 var(--accent-primary));
+    border-radius: 6px;
+    color: var(--bg-primary);
+    font-size: 16px;
     font-weight: bold;
-    min-width: 60px; /* Doble: 30px -> 60px */
-    min-height: 60px; /* Doble: 30px -> 60px */
-    max-width: 60px; /* Doble: 30px -> 60px */
-    max-height: 60px; /* Doble: 30px -> 60px */
+    min-width: 45px;
+    min-height: 45px;
+    max-width: 45px;
+    max-height: 45px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -161,91 +191,96 @@ QMainWindow {
 }
 
 .user-name {
-    font-size: 18px; /* Doble: 9px -> 18px */
+    font-size: 14px;
     font-weight: 600;
-    color: #00E5FF; /* Color cian */
+    color: var(--accent-primary);
     background: transparent;
-    text-align: center;
+    text-align: left;
 }
 
 .user-role {
-    font-size: 14px; /* Doble: 7px -> 14px */
-    color: #00E5FF; /* Color cian */
+    font-size: 11px;
+    color: var(--text-secondary);
     background: transparent;
     font-weight: 300;
-    text-align: center;
+    text-align: left;
 }
 
-/* Botón de logout profesional */
+/* Botón de logout profesional responsive */
 .logout-button {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 #2D3748, stop:1 #4A5568);
-    border: 2px solid #00E5FF; /* Color cian y más grueso */
-    border-radius: 8px; /* Aumentado */
-    padding: 20px 20px; /* Aumentado */
-    margin: 25px 15px; /* Aumentado */
-    color: #00E5FF; /* Color cian */
-    font-size: 16px; /* Doble: 8px -> 16px */
+    border: 1px solid var(--accent-primary);
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 10px;
+    color: var(--accent-primary);
+    font-size: 13px;
     font-weight: 500;
     text-align: center;
     font-family: 'Segoe UI', sans-serif;
-    min-height: 70px; /* Doble: 35px -> 70px */
+    min-height: 50px;
 }
 
 .logout-button:hover {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-        stop:0 #00E5FF, stop:1 #00E5FF); /* Fondo cian */
-    color: #0B0D0F; /* Texto oscuro para contraste */
-    border: 2px solid #00E5FF;
-    font-weight: bold;
+        stop:0 var(--accent-primary), stop:1 var(--accent-primary));
+    color: var(--bg-primary);
+    border: 1px solid var(--accent-primary);
+    font-weight: 600;
 }
 
-/* ========== COMPONENTES GENERALES ========== */
+/* ========== COMPONENTES GENERALES RESPONSIVE ========== */
 .header {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 var(--bg-primary), stop:1 var(--bg-secondary));
-    border-bottom: 2px solid var(--accent-primary);
-    padding: 20px 25px; /* Aumentado */
+    border-bottom: 1px solid var(--accent-primary);
+    padding: 15px 20px;
 }
 
-/* Tarjetas con efecto profesional */
+/* Tarjetas con efecto profesional responsive */
 .card {
     background: rgba(26, 29, 33, 0.8);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    padding: 24px;
-    margin: 10px;
+    padding: 20px;
+    margin: 8px;
 }
 
 .card:hover {
     border-color: var(--accent-primary);
     background: rgba(26, 29, 33, 0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
 }
 
-/* Botones primarios profesionales */
+/* Botones primarios profesionales responsive */
 .btn-primary {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 var(--accent-primary), stop:1 var(--accent-secondary));
     border: none;
     border-radius: 6px;
-    padding: 14px 28px;
+    padding: 12px 24px;
     color: white;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
     font-family: 'Segoe UI', sans-serif;
+    min-height: 40px;
 }
 
 .btn-primary:hover {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 #00F7FF, stop:1 #CC00B3);
+    transform: translateY(-1px);
 }
 
 .btn-primary:pressed {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 #00CCE0, stop:1 #990088);
+    transform: translateY(0px);
 }
 
-/* Tablas con estilo profesional */
+/* Tablas con estilo profesional responsive */
 QTableView {
     background-color: var(--bg-tertiary);
     border: 1px solid var(--border-color);
@@ -253,10 +288,11 @@ QTableView {
     gridline-color: var(--border-color);
     selection-background-color: rgba(0, 229, 255, 0.3);
     outline: none;
+    font-size: 13px;
 }
 
 QTableView::item {
-    padding: 14px 10px;
+    padding: 12px 8px;
     border-bottom: 1px solid var(--border-color);
     color: var(--text-primary);
     font-family: 'Segoe UI', sans-serif;
@@ -272,11 +308,88 @@ QHeaderView::section {
     background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
         stop:0 var(--bg-secondary), stop:1 var(--bg-tertiary));
     color: var(--accent-primary);
-    padding: 14px 10px;
+    padding: 12px 8px;
     border: none;
     border-right: 1px solid var(--border-color);
-    border-bottom: 2px solid var(--accent-primary);
+    border-bottom: 1px solid var(--accent-primary);
     font-weight: 600;
-    font-size: 12px;
+    font-size: 11px;
     font-family: 'Segoe UI', sans-serif;
+}
+
+/* ========== MEDIA QUERIES PARA QT ========== */
+/* Para pantallas pequeñas (menos de 1300px) */
+@media (max-width: 1300px) {
+    .sidebar {
+        min-width: 250px;
+        max-width: 280px;
+    }
+    
+    .menu-button {
+        padding: 15px 12px;
+        font-size: 13px;
+        min-height: 45px;
+    }
+    
+    .sidebar-title {
+        font-size: 20px;
+    }
+}
+
+/* Para pantallas muy pequeñas (menos de 1100px) */
+@media (max-width: 1100px) {
+    .sidebar {
+        min-width: 220px;
+        max-width: 240px;
+    }
+    
+    .menu-button {
+        padding: 12px 10px;
+        font-size: 12px;
+        min-height: 40px;
+    }
+    
+    .user-section {
+        margin: 15px 8px;
+        padding: 12px;
+    }
+}
+
+/* Estilos para el área de contenido principal */
+.content-area {
+    background: transparent;
+    border: none;
+    padding: 15px;
+}
+
+/* Efectos de glassmorphism para modales */
+.glass-panel {
+    background: rgba(16, 20, 35, 0.85);
+    border: 1px solid rgba(0, 229, 255, 0.2);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+
+/* Indicadores de estado */
+.status-indicator {
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    display: inline-block;
+    margin-right: 8px;
+}
+
+.status-active {
+    background-color: var(--success-color);
+    box-shadow: 0 0 8px var(--success-color);
+}
+
+.status-inactive {
+    background-color: var(--error-color);
+    box-shadow: 0 0 8px var(--error-color);
+}
+
+.status-warning {
+    background-color: var(--warning-color);
+    box-shadow: 0 0 8px var(--warning-color);
 }

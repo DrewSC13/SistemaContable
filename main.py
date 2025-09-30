@@ -35,29 +35,45 @@ class ContabilidadApp:
             print("✅ Base de datos inicializada correctamente")
         except Exception as e:
             print(f"❌ Error inicializando DB: {e}")
-            # Puedes continuar sin DB para desarrollo
     
     def show_login(self):
+        print("🔐 Mostrando ventana de login...")
         self.login_window = LoginWindow()
         self.login_window.login_successful.connect(self.on_login_success)
         self.login_window.show()
     
     def on_login_success(self, usuario):
+        print(f"✅ Login exitoso para usuario: {usuario.username}")
         self.login_window.close()
-        self.main_window = MainWindow(usuario)
-        self.main_window.logout_requested.connect(self.on_logout)
-        self.main_window.show()
+        self.show_main_window(usuario)
+    
+    def show_main_window(self, usuario):
+        print("🖥️ Abriendo ventana principal...")
+        try:
+            self.main_window = MainWindow(usuario)
+            self.main_window.logout_requested.connect(self.on_logout)
+            self.main_window.show()
+            print("✅ Ventana principal mostrada correctamente")
+        except Exception as e:
+            print(f"❌ Error abriendo ventana principal: {e}")
+            # Si hay error, volver al login
+            self.show_login()
     
     def on_logout(self):
-        self.main_window.close()
+        print("🚪 Cerrando sesión...")
+        if hasattr(self, 'main_window'):
+            self.main_window.close()
         self.show_login()
     
     def run(self):
         return self.app.exec()
 
 def main():
+    print("🚀 Iniciando NecroLedger...")
     app = ContabilidadApp()
-    sys.exit(app.run())
+    result = app.run()
+    print("👋 Aplicación finalizada")
+    return result
 
 if __name__ == "__main__":
     main()
