@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: contabilidad_gotica
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: Popete13
+    ports:
+      - "5433:5432"  # Cambiado a 5433
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

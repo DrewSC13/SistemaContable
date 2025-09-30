@@ -1,0 +1,282 @@
+/* Paleta Gótica Futurista - Profesional */
+* {
+    --bg-primary: #0B0D0F;
+    --bg-secondary: #101315;
+    --bg-tertiary: #1A1D21;
+    --accent-primary: #00E5FF;
+    --accent-secondary: #B3009E;
+    --accent-tertiary: #7B00FF;
+    --text-primary: #E6EEF3;
+    --text-secondary: #98A0A6;
+    --text-tertiary: #6B7280;
+    --border-color: #2B2F36;
+    --border-glow: rgba(0, 229, 255, 0.3);
+}
+
+QMainWindow {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+        stop:0 #0B0D0F, stop:0.5 #101315, stop:1 #0B0D0F);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', 'Inter', sans-serif;
+}
+
+/* ========== MENÚ LATERAL PROFESIONAL ========== */
+.sidebar {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 var(--bg-secondary), stop:1 var(--bg-tertiary));
+    border: none;
+    border-right: 2px solid var(--border-color);
+}
+
+.sidebar-header {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 var(--accent-primary), stop:1 var(--accent-tertiary));
+    border: none;
+    border-bottom: 2px solid var(--accent-primary);
+    padding: 40px 20px; /* Aumentado */
+}
+
+.sidebar-title {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 32px; /* Doble: 16px -> 32px */
+    font-weight: bold;
+    color: #00E5FF; /* Color cian */
+    background: transparent;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.sidebar-subtitle {
+    font-size: 16px; /* Doble: 8px -> 16px */
+    color: #00E5FF; /* Color cian */
+    background: transparent;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 300;
+    text-align: center;
+}
+
+/* Contenedor del menú */
+.menu-container {
+    background: transparent;
+    border: none;
+    padding: 20px 10px;
+}
+
+/* Grupos de menú */
+.menu-group {
+    background: transparent;
+    border: none;
+    padding: 0px;
+    margin-bottom: 40px; /* Aumentado */
+}
+
+.menu-group-title {
+    font-size: 16px; /* Doble: 8px -> 16px */
+    color: #00E5FF; /* Color cian */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    padding: 16px 20px 12px 20px; /* Aumentado */
+    background: transparent;
+    border-bottom: 1px solid var(--border-glow);
+    margin-bottom: 15px; /* Aumentado */
+    text-align: center;
+}
+
+/* Botones del menú - Diseño profesional futurista */
+.menu-button {
+    background: transparent;
+    border: none;
+    border-radius: 8px; /* Aumentado */
+    padding: 25px 20px; /* Aumentado significativamente */
+    margin: 8px 8px; /* Aumentado */
+    color: #00E5FF; /* Color cian */
+    text-align: center; /* Texto centrado */
+    font-size: 18px; /* Doble: 9px -> 18px */
+    font-weight: 500;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 80px; /* Doble: 40px -> 80px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-button:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgba(0, 229, 255, 0.15), stop:1 rgba(179, 0, 158, 0.15));
+    color: #00E5FF; /* Color cian */
+    border-left: 6px solid #00E5FF; /* Aumentado */
+    border-right: 6px solid #00E5FF; /* Añadido borde derecho */
+    padding-left: 14px; /* Ajustado */
+    padding-right: 14px; /* Añadido */
+    font-weight: bold;
+}
+
+.menu-button:checked {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgba(0, 229, 255, 0.25), stop:1 rgba(179, 0, 158, 0.25));
+    color: #00E5FF; /* Color cian */
+    border-left: 6px solid #00E5FF; /* Aumentado */
+    border-right: 6px solid #00E5FF; /* Añadido borde derecho */
+    font-weight: bold;
+    font-size: 20px; /* Un poco más grande cuando está seleccionado */
+}
+
+.menu-button:checked:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 rgba(0, 229, 255, 0.3), stop:1 rgba(179, 0, 158, 0.3));
+    color: #00E5FF; /* Color cian */
+}
+
+/* Sección de usuario */
+.user-section {
+    background: rgba(26, 29, 33, 0.9);
+    border: none;
+    border-top: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin: 30px 15px; /* Aumentado */
+    padding: 25px; /* Aumentado */
+}
+
+.user-avatar {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #00E5FF, stop:1 #00E5FF); /* Color cian sólido */
+    border-radius: 8px; /* Aumentado */
+    color: #0B0D0F; /* Texto oscuro para contraste */
+    font-size: 20px; /* Doble: 10px -> 20px */
+    font-weight: bold;
+    min-width: 60px; /* Doble: 30px -> 60px */
+    min-height: 60px; /* Doble: 30px -> 60px */
+    max-width: 60px; /* Doble: 30px -> 60px */
+    max-height: 60px; /* Doble: 30px -> 60px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-info {
+    background: transparent;
+    border: none;
+}
+
+.user-name {
+    font-size: 18px; /* Doble: 9px -> 18px */
+    font-weight: 600;
+    color: #00E5FF; /* Color cian */
+    background: transparent;
+    text-align: center;
+}
+
+.user-role {
+    font-size: 14px; /* Doble: 7px -> 14px */
+    color: #00E5FF; /* Color cian */
+    background: transparent;
+    font-weight: 300;
+    text-align: center;
+}
+
+/* Botón de logout profesional */
+.logout-button {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #2D3748, stop:1 #4A5568);
+    border: 2px solid #00E5FF; /* Color cian y más grueso */
+    border-radius: 8px; /* Aumentado */
+    padding: 20px 20px; /* Aumentado */
+    margin: 25px 15px; /* Aumentado */
+    color: #00E5FF; /* Color cian */
+    font-size: 16px; /* Doble: 8px -> 16px */
+    font-weight: 500;
+    text-align: center;
+    font-family: 'Segoe UI', sans-serif;
+    min-height: 70px; /* Doble: 35px -> 70px */
+}
+
+.logout-button:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #00E5FF, stop:1 #00E5FF); /* Fondo cian */
+    color: #0B0D0F; /* Texto oscuro para contraste */
+    border: 2px solid #00E5FF;
+    font-weight: bold;
+}
+
+/* ========== COMPONENTES GENERALES ========== */
+.header {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 var(--bg-primary), stop:1 var(--bg-secondary));
+    border-bottom: 2px solid var(--accent-primary);
+    padding: 20px 25px; /* Aumentado */
+}
+
+/* Tarjetas con efecto profesional */
+.card {
+    background: rgba(26, 29, 33, 0.8);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    margin: 10px;
+}
+
+.card:hover {
+    border-color: var(--accent-primary);
+    background: rgba(26, 29, 33, 0.9);
+}
+
+/* Botones primarios profesionales */
+.btn-primary {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 var(--accent-primary), stop:1 var(--accent-secondary));
+    border: none;
+    border-radius: 6px;
+    padding: 14px 28px;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.btn-primary:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #00F7FF, stop:1 #CC00B3);
+}
+
+.btn-primary:pressed {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #00CCE0, stop:1 #990088);
+}
+
+/* Tablas con estilo profesional */
+QTableView {
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    gridline-color: var(--border-color);
+    selection-background-color: rgba(0, 229, 255, 0.3);
+    outline: none;
+}
+
+QTableView::item {
+    padding: 14px 10px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-family: 'Segoe UI', sans-serif;
+}
+
+QTableView::item:selected {
+    background-color: rgba(0, 229, 255, 0.2);
+    color: var(--accent-primary);
+    font-weight: 600;
+}
+
+QHeaderView::section {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 var(--bg-secondary), stop:1 var(--bg-tertiary));
+    color: var(--accent-primary);
+    padding: 14px 10px;
+    border: none;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--accent-primary);
+    font-weight: 600;
+    font-size: 12px;
+    font-family: 'Segoe UI', sans-serif;
+}
