@@ -1,3 +1,6 @@
+import os
+import sys
+from datetime import datetime
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, 
                              QLabel, QFrame, QTableWidget, QTableWidgetItem,
                              QPushButton, QLineEdit, QDateEdit, QComboBox,
@@ -6,8 +9,18 @@ from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout,
                              QAbstractItemView, QSizePolicy)
 from PySide6.QtCore import Qt, QDate, Signal
 from PySide6.QtGui import QAction
-from datetime import datetime
-import os
+
+# Agregar el directorio raíz al path para imports absolutos
+sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+
+# Importación absoluta corregida
+try:
+    from services.journal_service import JournalService
+    from models import get_session, init_db
+    SERVICES_AVAILABLE = True
+except ImportError as e:
+    print(f"❌ Servicios no disponibles: {e}")
+    SERVICES_AVAILABLE = False
 
 class JournalView(QWidget):
     def __init__(self, usuario):
@@ -15,6 +28,7 @@ class JournalView(QWidget):
         self.usuario = usuario
         self.lineas_asiento = []
         self.setup_ui()
+        self.conectar_señales()
         
     def setup_ui(self):
         # Layout principal con tamaño flexible
@@ -221,7 +235,7 @@ class JournalView(QWidget):
         debe_layout.addWidget(QLabel("DEBE:"))
         self.spin_debe = QDoubleSpinBox()
         self.spin_debe.setMaximum(9999999.99)
-        self.spin_debe.setPrefix("Q ")
+        self.spin_debe.setPrefix("Bs ")
         self.spin_debe.setStyleSheet("""
             QDoubleSpinBox {
                 background: #1A1D21;
@@ -240,7 +254,7 @@ class JournalView(QWidget):
         haber_layout.addWidget(QLabel("HABER:"))
         self.spin_haber = QDoubleSpinBox()
         self.spin_haber.setMaximum(9999999.99)
-        self.spin_haber.setPrefix("Q ")
+        self.spin_haber.setPrefix("Bs ")
         self.spin_haber.setStyleSheet("""
             QDoubleSpinBox {
                 background: #1A1D21;
@@ -258,7 +272,26 @@ class JournalView(QWidget):
         
         # Botón agregar
         self.btn_agregar_linea = QPushButton("➕ AGREGAR")
-        self.btn_agregar_linea.setObjectName("btn-primary")
+        self.btn_agregar_linea.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #00E5FF, stop:1 #B3009E);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 12px;
+                font-weight: bold;
+                font-size: 11px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #00F7FF, stop:1 #FF0080);
+            }
+            QPushButton:disabled {
+                background: #2B2F36;
+                color: #6B7280;
+            }
+        """)
         self.btn_agregar_linea.setFixedWidth(100)
         line_controls.addWidget(self.btn_agregar_linea)
         
@@ -310,7 +343,7 @@ class JournalView(QWidget):
         totals_layout = QHBoxLayout()
         totals_layout.setSpacing(15)
         
-        self.lbl_total_debe = QLabel("TOTAL DEBE: Q 0.00")
+        self.lbl_total_debe = QLabel("TOTAL DEBE: Bs 0.00")
         self.lbl_total_debe.setStyleSheet("""
             font-size: 12px;
             font-weight: bold;
@@ -320,7 +353,7 @@ class JournalView(QWidget):
             border-radius: 4px;
         """)
         
-        self.lbl_total_haber = QLabel("TOTAL HABER: Q 0.00")
+        self.lbl_total_haber = QLabel("TOTAL HABER: Bs 0.00")
         self.lbl_total_haber.setStyleSheet("""
             font-size: 12px;
             font-weight: bold;
@@ -330,7 +363,7 @@ class JournalView(QWidget):
             border-radius: 4px;
         """)
         
-        self.lbl_diferencia = QLabel("DIFERENCIA: Q 0.00")
+        self.lbl_diferencia = QLabel("DIFERENCIA: Bs 0.00")
         self.lbl_diferencia.setStyleSheet("""
             font-size: 12px;
             font-weight: bold;
@@ -407,7 +440,22 @@ class JournalView(QWidget):
         filter_layout.addLayout(hasta_layout)
         
         self.btn_filtrar = QPushButton("🔍 FILTRAR")
-        self.btn_filtrar.setObjectName("btn-primary")
+        self.btn_filtrar.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #00E5FF, stop:1 #B3009E);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 12px;
+                font-weight: bold;
+                font-size: 11px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #00F7FF, stop:1 #FF0080);
+            }
+        """)
         self.btn_filtrar.setFixedWidth(100)
         filter_layout.addWidget(self.btn_filtrar)
         
@@ -453,10 +501,10 @@ class JournalView(QWidget):
         parent_layout.addWidget(history_frame)
     
     def create_descripcion_widget(self):
-        widget = QTextEdit()
-        widget.setMaximumHeight(50)
-        widget.setPlaceholderText("Descripción del asiento contable...")
-        widget.setStyleSheet("""
+        self.txt_descripcion = QTextEdit()
+        self.txt_descripcion.setMaximumHeight(50)
+        self.txt_descripcion.setPlaceholderText("Descripción del asiento contable...")
+        self.txt_descripcion.setStyleSheet("""
             QTextEdit {
                 background: #1A1D21;
                 border: 1px solid #2B2F36;
@@ -467,7 +515,7 @@ class JournalView(QWidget):
                 font-size: 11px;
             }
         """)
-        return widget
+        return self.txt_descripcion
     
     def conectar_señales(self):
         self.btn_nuevo.triggered.connect(self.nuevo_asiento)
@@ -485,9 +533,10 @@ class JournalView(QWidget):
         self.filtrar_asientos()
     
     def nuevo_asiento(self):
-        from services.journal_service import JournalService
-        from models import get_session, init_db
-        
+        if not SERVICES_AVAILABLE:
+            QMessageBox.critical(self, "Error", "Servicios no disponibles. Verifique la configuración.")
+            return
+            
         try:
             engine = init_db()
             session = get_session(engine)
@@ -506,11 +555,13 @@ class JournalView(QWidget):
             
         except Exception as e:
             QMessageBox.critical(self, "Error", f"Error cargando datos: {str(e)}")
+            # Generar número de asiento básico si hay error
+            fecha_actual = datetime.now()
+            self.txt_numero.setText(f"AS-{fecha_actual.strftime('%Y%m%d')}-001")
         
         # Limpiar formulario
         self.date_fecha.setDate(QDate.currentDate())
-        if hasattr(self, 'txt_descripcion'):
-            self.txt_descripcion.clear()
+        self.txt_descripcion.clear()
         self.tabla_lineas.setRowCount(0)
         self.lineas_asiento = []
         self.calcular_totales()
@@ -556,8 +607,8 @@ class JournalView(QWidget):
         for row, linea in enumerate(self.lineas_asiento):
             self.tabla_lineas.setItem(row, 0, QTableWidgetItem(linea['cuenta_text']))
             self.tabla_lineas.setItem(row, 1, QTableWidgetItem(linea['descripcion']))
-            self.tabla_lineas.setItem(row, 2, QTableWidgetItem(f"Q {linea['debe']:,.2f}"))
-            self.tabla_lineas.setItem(row, 3, QTableWidgetItem(f"Q {linea['haber']:,.2f}"))
+            self.tabla_lineas.setItem(row, 2, QTableWidgetItem(f"Bs {linea['debe']:,.2f}"))
+            self.tabla_lineas.setItem(row, 3, QTableWidgetItem(f"Bs {linea['haber']:,.2f}"))
             
             # Botón eliminar
             btn_eliminar = QPushButton("🗑️")
@@ -589,9 +640,9 @@ class JournalView(QWidget):
         total_haber = sum(linea['haber'] for linea in self.lineas_asiento)
         diferencia = total_debe - total_haber
         
-        self.lbl_total_debe.setText(f"TOTAL DEBE: Q {total_debe:,.2f}")
-        self.lbl_total_haber.setText(f"TOTAL HABER: Q {total_haber:,.2f}")
-        self.lbl_diferencia.setText(f"DIFERENCIA: Q {diferencia:,.2f}")
+        self.lbl_total_debe.setText(f"TOTAL DEBE: Bs {total_debe:,.2f}")
+        self.lbl_total_haber.setText(f"TOTAL HABER: Bs {total_haber:,.2f}")
+        self.lbl_diferencia.setText(f"DIFERENCIA: Bs {diferencia:,.2f}")
         
         # Resaltar si no está cuadrado
         if abs(diferencia) > 0.01:
@@ -614,9 +665,10 @@ class JournalView(QWidget):
             """)
     
     def guardar_asiento(self):
-        from services.journal_service import JournalService
-        from models import get_session, init_db
-        
+        if not SERVICES_AVAILABLE:
+            QMessageBox.critical(self, "Error", "Servicios no disponibles. Verifique la configuración.")
+            return
+
         # Validaciones básicas
         if not self.txt_numero.text().strip():
             QMessageBox.warning(self, "Advertencia", "❌ El número de asiento es requerido")
@@ -633,9 +685,9 @@ class JournalView(QWidget):
         if abs(total_debe - total_haber) > 0.01:
             QMessageBox.warning(self, "Advertencia", 
                               f"❌ El asiento no está cuadrado!\n"
-                              f"Debe: Q {total_debe:,.2f}\n"
-                              f"Haber: Q {total_haber:,.2f}\n"
-                              f"Diferencia: Q {total_debe - total_haber:,.2f}")
+                              f"Debe: Bs {total_debe:,.2f}\n"
+                              f"Haber: Bs {total_haber:,.2f}\n"
+                              f"Diferencia: Bs {total_debe - total_haber:,.2f}")
             return
         
         try:
@@ -655,9 +707,7 @@ class JournalView(QWidget):
                 })
             
             # Obtener descripción
-            descripcion = ""
-            if hasattr(self, 'txt_descripcion'):
-                descripcion = self.txt_descripcion.toPlainText()
+            descripcion = self.txt_descripcion.toPlainText()
             
             # Crear asiento
             fecha = self.date_fecha.date().toPython()
@@ -695,16 +745,38 @@ class JournalView(QWidget):
                                    QMessageBox.Yes | QMessageBox.No)
         
         if reply == QMessageBox.Yes:
-            from services.journal_service import JournalService
-            from models import get_session, init_db
-            
+            if not SERVICES_AVAILABLE:
+                QMessageBox.critical(self, "Error", "Servicios no disponibles. Verifique la configuración.")
+                return
+                
             try:
                 engine = init_db()
                 session = get_session(engine)
                 
-                # Por simplicidad, mostramos mensaje de éxito
-                QMessageBox.information(self, "✅ Éxito", f"Asiento {numero_asiento} eliminado correctamente")
-                self.filtrar_asientos()
+                journal_service = JournalService()
+                
+                # Buscar el asiento por número
+                asientos = journal_service.obtener_asientos(session)
+                asiento_id = None
+                for asiento in asientos:
+                    if asiento['numero'] == numero_asiento:
+                        asiento_id = asiento['id']
+                        break
+                
+                if asiento_id:
+                    success, mensaje = journal_service.eliminar_asiento(
+                        session=session, 
+                        asiento_id=asiento_id, 
+                        usuario_id=self.usuario.id
+                    )
+                    
+                    if success:
+                        QMessageBox.information(self, "✅ Éxito", mensaje)
+                        self.filtrar_asientos()
+                    else:
+                        QMessageBox.critical(self, "❌ Error", mensaje)
+                else:
+                    QMessageBox.warning(self, "Advertencia", "Asiento no encontrado")
                 
                 session.close()
                 
@@ -712,9 +784,10 @@ class JournalView(QWidget):
                 QMessageBox.critical(self, "❌ Error", f"Error eliminando asiento: {str(e)}")
     
     def filtrar_asientos(self):
-        from services.journal_service import JournalService
-        from models import get_session, init_db
-        
+        if not SERVICES_AVAILABLE:
+            QMessageBox.critical(self, "Error", "Servicios no disponibles. Verifique la configuración.")
+            return
+            
         try:
             engine = init_db()
             session = get_session(engine)
@@ -734,7 +807,7 @@ class JournalView(QWidget):
                 self.tabla_asientos.setItem(row, 2, QTableWidgetItem(asiento['descripcion']))
                 
                 total = sum(linea['debe'] for linea in asiento['lineas'])
-                self.tabla_asientos.setItem(row, 3, QTableWidgetItem(f"Q {total:,.2f}"))
+                self.tabla_asientos.setItem(row, 3, QTableWidgetItem(f"Bs {total:,.2f}"))
                 self.tabla_asientos.setItem(row, 4, QTableWidgetItem("✅ ACTIVO"))
             
             session.close()
@@ -753,5 +826,4 @@ class JournalView(QWidget):
     # Asegurar que las señales se conecten después de inicializar
     def showEvent(self, event):
         super().showEvent(event)
-        self.conectar_señales()
         self.cargar_datos_iniciales()

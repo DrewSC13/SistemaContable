@@ -1,119 +1,12 @@
 from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, 
                              QLabel, QFrame, QGridLayout, QScrollArea,
-                             QSizePolicy)
-from PySide6.QtCore import Qt, QTimer, QPropertyAnimation
+                             QSizePolicy, QPushButton)
+from PySide6.QtCore import Qt, QTimer
 from PySide6.QtGui import QPainter, QColor, QLinearGradient, QFont
-from PySide6.QtCharts import QChart, QChartView, QPieSeries, QBarSeries, QBarSet, QBarCategoryAxis, QValueAxis
-import math
-from models import Usuario
-
-class PieChartWidget(QWidget):
-    def __init__(self, title, data, colors, parent=None):
-        super().__init__(parent)
-        self.title = title
-        self.data = data
-        self.colors = colors
-        self.setMinimumSize(300, 250)
-        self.setup_chart()
-    
-    def setup_chart(self):
-        # Crear serie de torta
-        series = QPieSeries()
-        
-        # Agregar datos a la serie
-        for i, (label, value) in enumerate(self.data):
-            slice = series.append(label, value)
-            slice.setColor(QColor(self.colors[i % len(self.colors)]))
-            slice.setLabelVisible(True)
-            slice.setLabel(f"{label}: Bs {value:,.0f}")
-        
-        # Configurar el chart
-        chart = QChart()
-        chart.addSeries(series)
-        chart.setTitle(self.title)
-        chart.setTitleFont(QFont("Segoe UI", 12, QFont.Bold))
-        chart.setAnimationOptions(QChart.SeriesAnimations)
-        chart.legend().setVisible(True)
-        chart.legend().setAlignment(Qt.AlignBottom)
-        chart.setBackgroundBrush(QColor(0, 0, 0, 0))  # Fondo transparente
-        
-        # Chart view
-        chart_view = QChartView(chart)
-        chart_view.setRenderHint(QPainter.Antialiasing)
-        chart_view.setStyleSheet("""
-            QChartView {
-                background: transparent;
-                border: 1px solid rgba(0, 229, 255, 0.3);
-                border-radius: 8px;
-            }
-        """)
-        
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(chart_view)
-
-class BarChartWidget(QWidget):
-    def __init__(self, title, data, colors, parent=None):
-        super().__init__(parent)
-        self.title = title
-        self.data = data
-        self.colors = colors
-        self.setMinimumSize(400, 250)
-        self.setup_chart()
-    
-    def setup_chart(self):
-        # Crear series de barras
-        series = QBarSeries()
-        
-        # Crear sets de datos
-        for i, (category, values) in enumerate(self.data):
-            bar_set = QBarSet(category)
-            for value in values:
-                bar_set.append(value)
-            bar_set.setColor(QColor(self.colors[i % len(self.colors)]))
-            series.append(bar_set)
-        
-        # Configurar el chart
-        chart = QChart()
-        chart.addSeries(series)
-        chart.setTitle(self.title)
-        chart.setTitleFont(QFont("Segoe UI", 12, QFont.Bold))
-        chart.setAnimationOptions(QChart.SeriesAnimations)
-        
-        # Configurar ejes
-        categories = ["Ene", "Feb", "Mar", "Abr", "May", "Jun"]
-        axis_x = QBarCategoryAxis()
-        axis_x.append(categories)
-        chart.addAxis(axis_x, Qt.AlignBottom)
-        series.attachAxis(axis_x)
-        
-        axis_y = QValueAxis()
-        axis_y.setLabelFormat("%d")
-        axis_y.setTitleText("Bs")
-        chart.addAxis(axis_y, Qt.AlignLeft)
-        series.attachAxis(axis_y)
-        
-        chart.legend().setVisible(True)
-        chart.legend().setAlignment(Qt.AlignBottom)
-        chart.setBackgroundBrush(QColor(0, 0, 0, 0))  # Fondo transparente
-        
-        # Chart view
-        chart_view = QChartView(chart)
-        chart_view.setRenderHint(QPainter.Antialiasing)
-        chart_view.setStyleSheet("""
-            QChartView {
-                background: transparent;
-                border: 1px solid rgba(0, 229, 255, 0.3);
-                border-radius: 8px;
-            }
-        """)
-        
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(chart_view)
+from datetime import datetime
 
 class FuturisticDashboardView(QWidget):
-    def __init__(self, usuario: Usuario):
+    def __init__(self, usuario):
         super().__init__()
         self.usuario = usuario
         self.setup_ui()
@@ -126,7 +19,7 @@ class FuturisticDashboardView(QWidget):
         main_layout.setSpacing(0)
         
         # Título principal minimalista
-        title = QLabel("PANEL PRINCIPAL - MISKY CHOCLOS")
+        title = QLabel("🏠 PANEL PRINCIPAL - MISKY CHOCLOS")
         title.setAlignment(Qt.AlignCenter)
         title.setStyleSheet("""
             font-family: 'Segoe UI', sans-serif;
@@ -187,14 +80,64 @@ class FuturisticDashboardView(QWidget):
         scroll_layout.setContentsMargins(10, 20, 10, 20)
         scroll_layout.setSpacing(25)
         
+        # Sección de bienvenida
+        self.setup_welcome_section(scroll_layout)
+        
         # Grid principal para todas las métricas
         self.setup_metrics_grid(scroll_layout)
         
-        # Sección de gráficos
-        self.setup_charts_section(scroll_layout)
+        # Sección de acciones rápidas
+        self.setup_quick_actions(scroll_layout)
         
         scroll.setWidget(scroll_content)
         main_layout.addWidget(scroll)
+    
+    def setup_welcome_section(self, parent_layout):
+        """Configurar sección de bienvenida"""
+        welcome_frame = QFrame()
+        welcome_frame.setObjectName("welcome_frame")
+        welcome_layout = QVBoxLayout(welcome_frame)
+        
+        welcome_label = QLabel(f"👋 ¡Bienvenido, {self.usuario.username}!")
+        welcome_label.setStyleSheet("""
+            font-size: 28px;
+            font-weight: bold;
+            color: #00E5FF;
+            background: transparent;
+            margin-bottom: 10px;
+        """)
+        
+        subtitle_label = QLabel("Sistema Contable Misky Choclos - Panel de Control Principal")
+        subtitle_label.setStyleSheet("""
+            font-size: 16px;
+            color: #94A3B8;
+            background: transparent;
+        """)
+        
+        date_label = QLabel(f"📅 {datetime.now().strftime('%A, %d de %B de %Y - %H:%M')}")
+        date_label.setStyleSheet("""
+            font-size: 14px;
+            color: #B3009E;
+            background: transparent;
+            margin-top: 10px;
+        """)
+        
+        welcome_layout.addWidget(welcome_label)
+        welcome_layout.addWidget(subtitle_label)
+        welcome_layout.addWidget(date_label)
+        
+        welcome_frame.setStyleSheet("""
+            #welcome_frame {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 rgba(0, 229, 255, 0.1),
+                    stop:1 rgba(255, 0, 128, 0.1));
+                border: 1px solid rgba(0, 229, 255, 0.3);
+                border-radius: 12px;
+                padding: 20px;
+            }
+        """)
+        
+        parent_layout.addWidget(welcome_frame)
     
     def setup_metrics_grid(self, parent_layout):
         """Configurar grid con todas las métricas del sistema"""
@@ -312,94 +255,71 @@ class FuturisticDashboardView(QWidget):
         
         parent_layout.addLayout(main_grid)
     
-    def setup_charts_section(self, parent_layout):
-        """Configurar sección de gráficos"""
+    def setup_quick_actions(self, parent_layout):
+        """Configurar sección de acciones rápidas"""
+        actions_frame = QFrame()
+        actions_frame.setObjectName("actions_frame")
+        actions_layout = QVBoxLayout(actions_frame)
         
-        # Título de la sección de gráficos
-        charts_title = QLabel("ANÁLISIS VISUAL - DATOS FINANCIEROS")
-        charts_title.setStyleSheet("""
-            font-size: 18px; 
-            color: #00E5FF; 
-            font-weight: 600; 
-            font-family: 'Segoe UI';
-            margin-top: 30px;
+        title = QLabel("🚀 ACCIONES RÁPIDAS")
+        title.setStyleSheet("""
+            font-size: 20px;
+            font-weight: bold;
+            color: #00E5FF;
             margin-bottom: 15px;
-            letter-spacing: 1px;
         """)
-        charts_title.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        parent_layout.addWidget(charts_title)
+        actions_layout.addWidget(title)
         
-        # Contenedor principal para gráficos
-        charts_container = QFrame()
-        charts_container.setStyleSheet("""
-            QFrame {
-                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
-                    stop:0 rgba(0, 229, 255, 0.05),
-                    stop:1 rgba(255, 0, 128, 0.05));
+        # Grid de botones de acción
+        actions_grid = QGridLayout()
+        actions_grid.setSpacing(15)
+        
+        # Crear los botones sin conectar aún (se conectarán desde main_window)
+        self.btn_libro_diario = QPushButton("📖 LIBRO DIARIO")
+        self.btn_libro_diario.setToolTip("Ver libro diario completo")
+        self.btn_libro_diario.setObjectName("action_btn")
+        self.btn_libro_diario.setMinimumHeight(70)
+        
+        self.btn_nuevo_asiento = QPushButton("➕ NUEVO ASIENTO")
+        self.btn_nuevo_asiento.setToolTip("Crear nuevo asiento contable")
+        self.btn_nuevo_asiento.setObjectName("action_btn")
+        self.btn_nuevo_asiento.setMinimumHeight(70)
+        
+        # Agregar más botones según necesites...
+        
+        actions_grid.addWidget(self.btn_libro_diario, 0, 0)
+        actions_grid.addWidget(self.btn_nuevo_asiento, 0, 1)
+        # ... agregar más botones al grid
+        
+        actions_layout.addLayout(actions_grid)
+        
+        actions_frame.setStyleSheet("""
+            #actions_frame {
+                background: rgba(30, 41, 59, 0.5);
                 border: 1px solid rgba(0, 229, 255, 0.2);
                 border-radius: 12px;
+                padding: 20px;
+            }
+            
+            QPushButton#action_btn {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #3b82f6, stop:1 #1d4ed8);
+                color: white;
+                border: none;
+                border-radius: 8px;
                 padding: 15px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+            
+            QPushButton#action_btn:hover {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #60a5fa, stop:1 #2563eb);
+                border: 1px solid rgba(0, 229, 255, 0.6);
             }
         """)
         
-        charts_layout = QVBoxLayout(charts_container)
-        charts_layout.setSpacing(20)
-        
-        # Fila 1: Gráficos de torta
-        pie_charts_layout = QHBoxLayout()
-        pie_charts_layout.setSpacing(20)
-        
-        # Gráfico de torta 1 - Distribución de Ingresos
-        income_data = [
-            ("Ventas", 65000),
-            ("Servicios", 32000),
-            ("Inversiones", 15430),
-            ("Otros", 13000)
-        ]
-        income_colors = ["#00E5FF", "#B3009E", "#00FF88", "#FFAA00"]
-        pie_chart1 = PieChartWidget("DISTRIBUCIÓN DE INGRESOS", income_data, income_colors)
-        pie_charts_layout.addWidget(pie_chart1)
-        
-        # Gráfico de torta 2 - Distribución de Egresos
-        expenses_data = [
-            ("Compras", 35680),
-            ("Gastos Operativos", 21890),
-            ("Sueldos", 18750),
-            ("Impuestos", 12890)
-        ]
-        expenses_colors = ["#FF4444", "#FF8C00", "#FF0080", "#AA00FF"]
-        pie_chart2 = PieChartWidget("DISTRIBUCIÓN DE EGRESOS", expenses_data, expenses_colors)
-        pie_charts_layout.addWidget(pie_chart2)
-        
-        charts_layout.addLayout(pie_charts_layout)
-        
-        # Fila 2: Gráficos de barras
-        bar_charts_layout = QHBoxLayout()
-        bar_charts_layout.setSpacing(20)
-        
-        # Gráfico de barras 1 - Ventas vs Compras (6 meses)
-        sales_vs_purchases_data = [
-            ("Ventas", [45000, 52000, 48000, 61000, 58750, 65750]),
-            ("Compras", [32000, 38000, 29500, 42800, 38680, 45680])
-        ]
-        bar_colors1 = ["#00E5FF", "#B3009E"]
-        bar_chart1 = BarChartWidget("VENTAS VS COMPRAS - ÚLTIMOS 6 MESES", sales_vs_purchases_data, bar_colors1)
-        bar_charts_layout.addWidget(bar_chart1)
-        
-        # Gráfico de barras 2 - Flujo de Caja Mensual
-        cash_flow_data = [
-            ("Ingresos", [42000, 48000, 52000, 45000, 55430, 65430]),
-            ("Egresos", [38000, 42000, 45000, 39210, 48210, 58210]),
-            ("Utilidad", [4000, 6000, 7000, 5790, 7220, 7220])
-        ]
-        bar_colors2 = ["#00FF88", "#FF4444", "#0078D7"]
-        bar_chart2 = BarChartWidget("FLUJO DE CAJA MENSUAL", cash_flow_data, bar_colors2)
-        bar_charts_layout.addWidget(bar_chart2)
-        
-        charts_layout.addLayout(bar_charts_layout)
-        
-        parent_layout.addWidget(charts_container)
-        parent_layout.addStretch()
+        parent_layout.addWidget(actions_frame)
     
     def create_windows8_metric_card(self, title, value, color, icon, description):
         """Crear tarjeta de métrica estilo Windows 8 futurista"""
@@ -537,6 +457,32 @@ class FuturisticDashboardView(QWidget):
         # En una implementación real, aquí se conectaría con la base de datos
         # Por ahora es solo una simulación visual
         pass
+    
+    # Métodos de navegación (conectados a los botones)
+    def ir_libro_diario(self):
+        """Navegar al libro diario"""
+        # Esta función se conectará con el sistema de navegación principal
+        print("🔗 Navegando a Libro Diario...")
+    
+    def ir_registro_asientos(self):
+        """Navegar al registro de asientos"""
+        print("🔗 Navegando a Registro de Asientos...")
+    
+    def ir_reportes(self):
+        """Navegar a reportes"""
+        print("🔗 Navegando a Reportes...")
+    
+    def ir_clientes(self):
+        """Navegar a clientes"""
+        print("🔗 Navegando a Clientes...")
+    
+    def ir_proveedores(self):
+        """Navegar a proveedores"""
+        print("🔗 Navegando a Proveedores...")
+    
+    def ir_configuracion(self):
+        """Navegar a configuración"""
+        print("🔗 Navegando a Configuración...")
 
 # Para mantener compatibilidad
 DashboardView = FuturisticDashboardView

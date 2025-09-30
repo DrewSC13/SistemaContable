@@ -689,49 +689,143 @@ class MainWindow(QMainWindow):
     
     def load_views(self):
         """Cargar vistas con manejo de errores"""
+        print("🔄 Cargando vistas...")
+        
         try:
+            # Dashboard principal futurista (Index 0)
             from src.views.dashboard_view import DashboardView
-            self.stacked_widget.addWidget(DashboardView(self.usuario))
-            print("✅ DashboardView cargada correctamente")
+            dashboard = DashboardView(self.usuario)
+            self.stacked_widget.addWidget(dashboard)
+            print("✅ DashboardView cargada correctamente en índice 0")
         except Exception as e:
             print(f"❌ Error cargando DashboardView: {e}")
-            self.stacked_widget.addWidget(self.create_placeholder_view("Dashboard", e))
+            self.stacked_widget.addWidget(self.create_placeholder_view("Dashboard Principal", e))
         
         try:
-            from src.views.journal_view import JournalView
-            self.stacked_widget.addWidget(JournalView(self.usuario))
-            print("✅ JournalView cargada correctamente")
+            # Vista completa del libro diario (Index 1)
+            from src.views.libro_diario_view import LibroDiarioView
+            libro_diario = LibroDiarioView(self.usuario)
+            self.stacked_widget.addWidget(libro_diario)
+            print("✅ LibroDiarioView cargada correctamente en índice 1")
         except Exception as e:
-            print(f"❌ Error cargando JournalView: {e}")
+            print(f"❌ Error cargando LibroDiarioView: {e}")
             self.stacked_widget.addWidget(self.create_placeholder_view("Libro Diario", e))
         
-        # Placeholders para otros módulos
-        for i in range(10):
-            self.stacked_widget.addWidget(self.create_placeholder_view(f"Módulo {i+2}"))
-    
-    def create_placeholder_view(self, title, error=None):
+        try:
+            # Vista de registro de asientos (Index 2)
+            from src.views.journal_view import JournalView
+            journal = JournalView(self.usuario)
+            self.stacked_widget.addWidget(journal)
+            print("✅ JournalView cargada correctamente en índice 2")
+        except Exception as e:
+            print(f"❌ Error cargando JournalView: {e}")
+            self.stacked_widget.addWidget(self.create_placeholder_view("Registro Asientos", e))
+        
+        # SOLO PLACEHOLDERS para módulos futuros (Index 3 en adelante)
+        # No debería haber importaciones de módulos reales aquí
+        modulo_placeholders = [
+            ("Libro Mayor", "📚 Módulo en desarrollo - Próximamente"),
+            ("Balances", "⚖️ Módulo en desarrollo - Próximamente"), 
+            ("Ventas", "🛒 Módulo en desarrollo - Próximamente"),
+            ("Compras", "📦 Módulo en desarrollo - Próximamente"),
+            ("Tesorería", "💼 Módulo en desarrollo - Próximamente"),
+            ("Inventarios", "📋 Módulo en desarrollo - Próximamente"),
+            ("Clientes", "👥 Módulo en desarrollo - Próximamente"),
+            ("Proveedores", "🤝 Módulo en desarrollo - Próximamente"),
+            ("Reportes", "📊 Módulo en desarrollo - Próximamente"),
+            ("Configuración", "⚙️ Módulo en desarrollo - Próximamente")
+        ]
+        
+        for i, (modulo, mensaje) in enumerate(modulo_placeholders):
+            placeholder = self.create_placeholder_view(modulo, mensaje)
+            self.stacked_widget.addWidget(placeholder)
+            print(f"✅ Placeholder para {modulo} creado en índice {i+3}")
+        
+        print(f"🎯 Total de vistas cargadas: {self.stacked_widget.count()}")
+        
+    def create_placeholder_view(self, title, message=None):
+        """Crea una vista placeholder para módulos en desarrollo"""
+        if message is None:
+            message = f"Módulo {title} - En desarrollo"
+        
         placeholder = QWidget()
         layout = QVBoxLayout(placeholder)
         layout.setAlignment(Qt.AlignCenter)
         
-        title_label = QLabel(title)
-        title_label.setStyleSheet("""
-            font-size: 24px; 
-            color: #00E5FF; 
-            font-weight: bold; 
-            margin-bottom: 10px;
+        # Icono de construcción
+        icon_label = QLabel("🚧")
+        icon_label.setStyleSheet("""
+            font-size: 80px;
+            margin-bottom: 20px;
         """)
+        icon_label.setAlignment(Qt.AlignCenter)
         
-        if error:
-            error_label = QLabel(f"Error: {str(error)}")
-            error_label.setStyleSheet("font-size: 12px; color: #FF6B6B;")
-            layout.addWidget(error_label)
+        # Título del módulo
+        title_label = QLabel(title.upper())
+        title_label.setStyleSheet("""
+            font-size: 32px;
+            color: #00E5FF;
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-family: 'Segoe UI', sans-serif;
+        """)
+        title_label.setAlignment(Qt.AlignCenter)
         
-        status_label = QLabel("En desarrollo")
-        status_label.setStyleSheet("font-size: 16px; color: #B3009E;")
+        # Mensaje de desarrollo
+        message_label = QLabel(message)
+        message_label.setStyleSheet("""
+            font-size: 16px;
+            color: #94A3B8;
+            margin-bottom: 30px;
+            font-family: 'Segoe UI', sans-serif;
+        """)
+        message_label.setAlignment(Qt.AlignCenter)
+        message_label.setWordWrap(True)
         
+        # Información adicional
+        info_label = QLabel("Este módulo estará disponible en futuras actualizaciones")
+        info_label.setStyleSheet("""
+            font-size: 14px;
+            color: #B3009E;
+            font-style: italic;
+            margin-bottom: 40px;
+        """)
+        info_label.setAlignment(Qt.AlignCenter)
+        
+        # Botón para volver al dashboard
+        back_btn = QPushButton("⬅️ VOLVER AL DASHBOARD")
+        back_btn.setStyleSheet("""
+            QPushButton {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #00E5FF, stop:1 #B3009E);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 12px 24px;
+                font-weight: bold;
+                font-size: 14px;
+                min-width: 200px;
+            }
+            QPushButton:hover {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #00F7FF, stop:1 #FF0080);
+            }
+        """)
+        back_btn.clicked.connect(lambda: self.stacked_widget.setCurrentIndex(0))
+        
+        layout.addWidget(icon_label)
         layout.addWidget(title_label)
-        layout.addWidget(status_label)
+        layout.addWidget(message_label)
+        layout.addWidget(info_label)
+        layout.addWidget(back_btn)
+        
+        # Fondo minimalista
+        placeholder.setStyleSheet("""
+            QWidget {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #0A0E17, stop:0.5 #13182B, stop:1 #0A0E17);
+            }
+        """)
         
         return placeholder
     
@@ -876,6 +970,19 @@ class MainWindow(QMainWindow):
             # Actualizar título en toolbar
             modulo_nombre = self.menu_buttons[index].full_text
             self.context_label.setText(f"MISKY CHOCLOS - {modulo_nombre.upper()}")
+            
+            # Conectar los botones de acción del dashboard cuando esté activo
+            if index == 0:  # Dashboard principal
+                try:
+                    dashboard = self.stacked_widget.widget(0)
+                    # Conectar los botones de acción del dashboard a la navegación
+                    if hasattr(dashboard, 'ir_libro_diario'):
+                        # Reconectar los botones del dashboard
+                        dashboard.ir_libro_diario = lambda: self.stacked_widget.setCurrentIndex(1)
+                        dashboard.ir_registro_asientos = lambda: self.stacked_widget.setCurrentIndex(2)
+                        print("✅ Botones del dashboard conectados a la navegación")
+                except Exception as e:
+                    print(f"⚠️ No se pudieron conectar los botones del dashboard: {e}")
     
     def cerrar_sesion(self):
         """Cerrar sesión del usuario"""
