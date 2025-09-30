@@ -393,3 +393,106 @@ QHeaderView::section {
     background-color: var(--warning-color);
     box-shadow: 0 0 8px var(--warning-color);
 }
+
+/* ========== MEDIA QUERIES RESPONSIVE ========== */
+
+/* Pantallas grandes (Desktop) */
+@media (min-width: 1200px) {
+    .sidebar {
+        min-width: 280px;
+        max-width: 320px;
+    }
+    
+    .menu-button {
+        font-size: 14px;
+        padding: 18px 15px;
+    }
+}
+
+/* Pantallas medianas (Tablet) */
+@media (max-width: 1199px) and (min-width: 768px) {
+    .sidebar {
+        min-width: 220px;
+        max-width: 260px;
+    }
+    
+    .menu-button {
+        font-size: 13px;
+        padding: 15px 12px;
+    }
+    
+    .sidebar-title {
+        font-size: 20px;
+    }
+    
+    .sidebar-subtitle {
+        font-size: 10px;
+    }
+}
+
+/* Pantallas pequeñas (Mobile) */
+@media (max-width: 767px) {
+    .sidebar {
+        min-width: 60px;
+        max-width: 80px;
+    }
+    
+    .menu-button {
+        font-size: 11px;
+        padding: 12px 8px;
+        min-height: 45px;
+    }
+    
+    .sidebar-title {
+        font-size: 16px;
+    }
+    
+    .sidebar-subtitle {
+        font-size: 8px;
+    }
+    
+    .user-section {
+        margin: 10px 5px;
+        padding: 8px;
+    }
+    
+    .logout-button {
+        font-size: 11px;
+        padding: 10px;
+        margin: 10px 5px;
+    }
+}
+
+/* Estados de hover para dispositivos táctiles */
+@media (hover: none) {
+    .menu-button:hover {
+        background: transparent;
+    }
+    
+    .menu-button:checked:hover {
+        background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+            stop:0 rgba(0, 229, 255, 0.25), stop:1 rgba(179, 0, 158, 0.25));
+    }
+}
+
+/* Modo compacto del sidebar */
+.sidebar-compact .sidebar-title {
+    font-size: 14px;
+}
+
+.sidebar-compact .menu-button {
+    padding: 10px 5px;
+    font-size: 11px;
+}
+
+/* Ajustes para alta densidad de píxeles */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .card {
+        border-width: 0.5px;
+    }
+    
+    .menu-button {
+        border-left-width: 2px;
+        border-right-width: 2px;
+    }
+}
